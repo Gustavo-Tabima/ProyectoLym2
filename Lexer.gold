@@ -1,0 +1,88 @@
+//GUSTAVO ADOLFO TABIMA - ANDRES FELIPE GARCIA BERNAL
+//                      PROYECTO 2 LENGUAJES Y MÁQUINAS
+using gold.structures.automaton.*
+using gold.visualization.automaton.*
+
+procedure main(args:String[]) begin
+    lexer = createTransducer()
+	 testLexer(lexer)
+end
+  
+        
+
+procedure testLexer(M:ITransducer) begin
+	var sc:java.util.Scanner(System.$in)
+	while true do
+		print "----------------------------"
+		print "Enter an input string: "
+		string:=sc.nextLine()+" "   //We add a space (which is also a separator to the end of the string)
+		result:=M.acceptsString(string)    
+		tokenStream := M.getOutputString()
+		print "The lexer did "+(result?"":"not ")+" accept the string."
+		if result then print "Token Stream: "+ tokenStream end		
+	end
+end 
+
+ 
+
+
+var names
+  
+function createTransducer():ITransducer begin
+	
+	Q:= {'I','R', "RO", "ROB" ,"ROBO", "ROBOT", "ROBOT_", "ROBOT_R" ,"V", "VA", "VAR", "VARS","VARS ","B","BE","BEG","BEGI","BEGIN","A","AS"
+	,"ASI","ASIG","ASIGN","ASIGN:","M","MO","MOV","MOVE","MOVE:","T","TU","TUR","TURN","TURN:","F","FA","FAC","FACE","FACE:","P","PU","PUT","PUT;","PI","PIC","PICK","PICK:","MOVE: t","MOVE: to"
+	,"MOVE: toT","MOVE: toTh","MOVE: toThe","MOVE: i","MOVE: in","MOVE: inD","MOVE: inDi","MOVE: inDir","MOVE: inDir:","i","if","if:","t","th","then","then:","e","el","els","else","else:",
+	"w","wh","whi","whil","while","while:","d","do","do:","r","re","rep","repe","repea","repeat","repeat:","t","ti","tim","time","times","times:","fa","fac","faci","facin","facing","facing:","c","ca","can","canP","canPu","canPut","canPut:","canPi","canPic","canPick","canPick:"
+	,"canM","canMo","canMov","canMov","canMove","canMove:","n","no","not","not:","ERROR"}
+	
+	Σ:=('A'‥'Z') ∪ ('a' ‥ 'z') ∪ (':')∪ ('_') ∪ (' ')∪ (',')
+	Out:={"RR","V(","B{","}E","As","Mo","to","Fa","T","n","s","e","w","Pu","Pi","toThe","inDir"} 
+	q₀:='I'
+	F:= {"E"}
+	return 	GDeterministicTransducer(Q,Σ,Out,q₀,F,δ,g,h)
+end
+
+function δ(q,σ) begin
+	if (q = "Err") then return "Err"
+	elseif  σ ∈ {'(',')',' '} then return "I"	
+    elseif q="I" and σ='p' then return "p"
+	elseif q="I" and σ='t' then return "t"
+	elseif q="I" and σ ∈ ('0' ‥ '9') then return "Num"
+	elseif	q="Num" and σ ∈ ('0' ‥ '9') then return "Num"
+	elseif	q="Num" and σ ∈ ('a' ‥ 'z') then return "Err"
+	
+	elseif q="p" and σ='l' then return "pl" 
+    elseif q="pl" and σ='u' then return "plu" 
+    elseif q="plu" and σ='s' then return "plus" 
+	elseif q="t" and σ='i' then return "ti" 
+    elseif q="ti" and σ='m' then return "tim" 
+    elseif q="tim" and σ='e' then return "time" 
+    elseif q="time" and σ='s' then return "times" 
+    
+    
+    else  return "Id"
+    end	
+end 
+
+
+
+function g(q) begin
+	return λ
+end
+
+function h(q,σ) begin
+	var s: String
+	s := λ
+
+	if q ∉ {"Err"} and σ ∈ {'(',')',' '} then
+		if σ ∉ {' '} then  s=String.valueOf(σ) end
+		if q=="I" then return s
+    	elseif q=="plus" then return "+"+s 
+   		elseif q=="times" then return "*"+s
+		elseif q=="Num" then return "n"+s
+		else return "v"+s
+ 		end
+	else return  λ
+	end
+end
