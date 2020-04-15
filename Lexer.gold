@@ -30,7 +30,7 @@ var names
   
 function createTransducer():ITransducer begin
 	
-	Q:= {'I','R', "RO", "ROB" ,"ROBO", "ROBOT", "ROBOT_", "ROBOT_R" ,"V", "VA", "VAR", "VARS","VARS ","B","BE","BEG","BEGI","BEGIN","A","AS"
+	Q:= {'I','R', "RO", "ROB" ,"ROBO", "ROBOT", "ROBOT_", "ROBOT_R" ,"V", "VA", "VAR", "VARS","VARSL","B","BE","BEG","BEGI","BEGIN","A","AS"
 	,"ASI","ASIG","ASIGN","ASIGN:","M","MO","MOV","MOVE","MOVE:","T","TU","TUR","TURN","TURN:","F","FA","FAC","FACE","FACE:","P","PU","PUT","PUT;","PI","PIC","PICK","PICK:","MOVE: t","MOVE: to"
 	,"MOVE: toT","MOVE: toTh","MOVE: toThe","MOVE: i","MOVE: in","MOVE: inD","MOVE: inDi","MOVE: inDir","MOVE: inDir:","i","if","if:","t","th","then","then:","e","el","els","else","else:",
 	"w","wh","whi","whil","while","while:","d","do","do:","r","re","rep","repe","repea","repeat","repeat:","t","ti","tim","time","times","times:","fa","fac","faci","facin","facing","facing:","c","ca","can","canP","canPu","canPut","canPut:","canPi","canPic","canPick","canPick:"
@@ -44,26 +44,30 @@ function createTransducer():ITransducer begin
 end
 
 function δ(q,σ) begin
-	if (q = "Err") then return "Err"
-	elseif  σ ∈ {'(',')',' '} then return "I"	
-    elseif q="I" and σ='p' then return "p"
-	elseif q="I" and σ='t' then return "t"
-	elseif q="I" and σ ∈ ('0' ‥ '9') then return "Num"
-	elseif	q="Num" and σ ∈ ('0' ‥ '9') then return "Num"
-	elseif	q="Num" and σ ∈ ('a' ‥ 'z') then return "Err"
-	
-	elseif q="p" and σ='l' then return "pl" 
-    elseif q="pl" and σ='u' then return "plu" 
-    elseif q="plu" and σ='s' then return "plus" 
-	elseif q="t" and σ='i' then return "ti" 
-    elseif q="ti" and σ='m' then return "tim" 
-    elseif q="tim" and σ='e' then return "time" 
-    elseif q="time" and σ='s' then return "times" 
-    
-    
-    else  return "Id"
+if σ="" then return q
+if q='I' and σ='R' then return 'R'
+elseif q='R' and σ='O' then return "RO"	 
+elseif q="RO" and σ='B' then return "ROB"	 
+elseif q="ROB" and σ='O' then return "ROBO"	 
+elseif q="ROBO" and σ='T' then return "ROBOT"	 
+elseif q="ROBOT" and σ='_' then return "ROBOT_"	 
+elseif q="ROBOT_" and σ='R' then return "ROBOT_R"	 //aqui ya leyó robot
+elseif q="ROBOT_R" and σ= 'V' then return "V"	 
+elseif q="ROBOT_R" and σ= 'B' then return "B"			 
+ //condiciones de lo que puede aparecer después de robot 
+elseif q="V" and σ= 'A' then return "VA"
+elseif q="VA" and σ= 'R' then return "VAR"
+elseif q="VAR" and σ= 'S' then return "VARS"
+elseif q="VARS" and σ ∈ ('a'‥'z') then return "VARSL "
+elseif q="VARSL" and σ= ',' then return "VARS "
+elseif q="VARS" and σ= 'B'  then return "B"
+elseif q="B" and σ= 'E' then return "BE"  
+elseif q="BE" and σ= 'G' then return "BEG"  
+elseif q="BEG" and σ= 'I' then return "BEGI"  
+elseif q="BEGI" and σ= 'N' then return "BEGIN"
     end	
 end 
+end
 
 
 
