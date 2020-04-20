@@ -41,12 +41,13 @@ function createTransducer():ITransducer begin
 	"PI","PIC","PICK","PICK:",
 	"MOVE: t","MOVE: TO"
 	,"MOVE: TOT","MOVE: TOTH","MOVE: TOTHE",
-	"MOVE: I","MOVE: IN","MOVE: IND","MOVE: INDI","MOVE: INDIR","MOVE: INDIR:"
-	,"I","IF","IF:","T","TH","THE","THEN","THEN:","E","EL","ELS","ELSE","ELSE:",
+	"MOVE: I","MOVE: IN","MOVE: IND","MOVE: INDI",
+	"MOVE: INDIR","MOVE: INDIR:","I","IF","IF:","T",
+	"TH","THE","THEN","THEN:","E","EL","ELS","ELSE","ELSE:",
 	"W","WH","WHI","WHIL","WHILE","WHILE:",
 	"D","DO","DO:","R","RE","REP","REPE","REPEA","REPEAT","REPEAT:",
-	"T","TI","TIM","TIME","TIMES","TIMES:","FA","FAC","FACI","FACIN","FACING","FACING:","C","CA","CAN","CANP","CANPU","CANPUT","CANPUT:","CANPI","CANPIC","CANPICK","CANPICK:"
-	,"CANM","CAMM","CANMOV","CANMOV:","CANMOVE","CANMOVE:","N","NO","NOT","NOT:","ERROR"}
+	"T","TI","TIM","TIME","TIMES","TIMES:","TIMES:N","FA","FAC","FACI","FACIN","FACING","FACING:","C","CA","CAN","CANP","CANPU","CANPUT","CANPUT:","CANPUT:N","CANPI","CANPIC","CANPICK","CANPICK:","CANPICK:N",
+	"CANM","CAMM","CANMOV","CANMOV:","CANMOVE","CANMOVE:","N","NO","NOT","NOT:","ERROR","N","NO","NOR","NORT","S","SO","SOU","SOUT","W","WE","WES","E","EA","EAS"}
 	
 	Σ:=('A'‥'Z') ∪ ('a' ‥ 'z') ∪ (':')∪ ('_') ∪ (' ')∪ (',')
 	Out:={"RR","V(","B{","}E","As","Mo","to","Fa","T","n","s","e","w","Pu","Pi","toThe","inDir"} 
@@ -59,6 +60,10 @@ function δ(q,σ) begin
 if σ="" then return q
 end
 if σ="\n" then return q
+	
+//-------------------------------------------------------------------------------------------------
+//------------------------Detección de Ordenes Robot------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 if q='I' and σ='R' then return 'R'
 elseif q='R' and σ='O' then return "RO"	 
 elseif q="RO" and σ='B' then return "ROB"	 
@@ -68,7 +73,9 @@ elseif q="ROBOT" and σ='_' then return "ROBOT_"
 elseif q="ROBOT_" and σ='R' then return "ROBOT_R"	 //aqui ya leyó robot
 elseif q="ROBOT_R" and σ= 'V' then return "V"	 
 elseif q="ROBOT_R" and σ= 'B' then return "B"			 
- //condiciones de lo que puede aparecer después de robot 
+ //-------------------------------------------------------------------------------------------------
+//------------------------Bloques de instrucciones------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 elseif q="V" and σ= 'A' then return "VA"
 elseif q="VA" and σ= 'R' then return "VAR"
 elseif q="VAR" and σ= 'S' then return "VARS"
@@ -91,10 +98,111 @@ if σ= 'I' then return "MOVE: I"//caso indir
 elseif σ= 'T' then return "MOVE: T"//TOTHE
 else return "BEGIN"  //vuelve al estado begin
 
+
+
+
+//-------------------------------------------------------------------------------------------------
+//------------------------Condicionales------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+
+//Llegado de Begin a If
+if q="BEGIN" and σ= 'I' then return "I"
+elseif q="BEGIN" and σ= 'F' then return "IF"
+	
+//DE IF A FACING
+elseif q ="IF" and σ= 'F' then return "F"
+elseif q ="F" and σ= 'A' then return "FA"
+elseif q ="FA" and σ= 'C' then return "FAC"
+elseif q ="FAC" and σ= 'I' then return "FACI"
+elseif q ="FACI" and σ= 'N' then return "FACIN"
+elseif q ="FACIN" and σ= 'G' then return "FACING"
+elseif q ="FACING" and σ= "S" then return "S"
+elseif q ="FACING" and σ= "N" then return "N"
+elseif q ="FACING" and σ= "W" then return "W"
+elseif q ="FACING" and σ= "E" then return "E"
+
+//DE IF A CANPICK
+elseif q ="IF" and σ= 'C' then return "C"
+elseif q ="C" and σ= 'A' then return "CA"
+elseif q ="CA" and σ= 'N' then return "CAN"
+elseif q ="CAN" and σ= 'P' then return "CANP"
+elseif q ="CANP" and σ= 'I' then return "CANPI"
+elseif q ="CANPI" and σ= 'C' then return "CANPIC"
+elseif q ="CANPIC" and σ= 'K' then return "CANPICK"
+elseif q ="CANPICK" and σ= ':' then return "CANPICK:"
+elseif q ="CANPICK:" and σ∈('a'‥'z')∪('1'‥'9') then return "CANPICK:N"
+elseif q="CANPICK:N" then return "IF"
+	
+// DE IF A CANPUT
+elseif q ="IF" and σ= 'C' then return "C"
+elseif q ="C" and σ= 'A' then return "CA"
+elseif q ="CA" and σ= 'N' then return "CAN"
+elseif q ="CAN" and σ= 'P' then return "CANP"
+elseif q ="CANP" and σ= 'U' then return "CANPU"
+elseif q ="CANPU" and σ= 'T' then return "CANPUT"
+elseif q ="CANPUT" and σ= ':' then return "CANPUT:"
+elseif q ="CANPUT:" and σ∈('a'‥'z')∪('1'‥'9') then return "CANPUT:N"
+elseif q="CANPUT:N" then return "IF"
+//Then A BEGIN
+elseif q ="IF" and σ= 'T' then return "T"
+elseif q ="T" and σ= 'H' then return "TH"
+elseif q ="TH" and σ= 'E' then return "THE"
+elseif q ="THE" and σ= 'N' then return "BEGIN"
+//BEGIN a else
+elseif q ="BEGIN" and σ= 'E' then return "E"
+elseif q ="E" and σ= 'L' then return "EL"
+elseif q ="EL" and σ= 'S' then return "ELS"
+elseif q ="ELS" and σ= 'E' then return "BEGIN"	
+
+
+//De While a IF
+elseif q ="BEGIN" and σ= 'W' then return "W"
+elseif q ="W" and σ= 'H' then return "TH"
+elseif q ="WH" and σ= 'E' then return "THE"
+elseif q ="WHI" and σ= 'L' then return "WHIL"
+elseif q ="WHIL" and σ= 'E' then return "WHILE"
+elseif q ="WHILE" and σ= ':' then return "WHILE:"
+elseif q ="WHILE:"  then return "IF"
+
+//Do a Begin
+elseif q ="IF" and σ= 'D' then return "D"
+elseif q ="D" and σ= 'O' then return "BEGIN"
+	
+//Begin a Times
+
+elseif q ="BEGIN" and σ= 'T' then return "T"
+elseif q ="T" and σ= 'I' then return "TI"
+elseif q ="TI" and σ= 'E' then return "TIM"
+elseif q ="TIM" and σ= 'L' then return "TIME"
+elseif q ="TIME" and σ= 'E' then return "TIMES"
+elseif q ="TIMES" and σ= ':' then return "TIMES:"
+elseif q ="TIMES:" and σ∈('a'‥'z')∪('1'‥'9') then return "TIMES:N"
+elseif q="TIMES:N" then return "BEGIN"
+
+//IF a CanMove
+elseif q ="IF" and σ= 'C' then return "C"
+elseif q ="C" and σ= 'A' then return "CA"
+elseif q ="CA" and σ= 'N' then return "CAN"
+elseif q ="CAN" and σ= 'M' then return "CANM"
+elseif q ="CANM" and σ= 'O' then return "CANMO"
+elseif q ="CANMO" and σ= 'V' then return "CANMOV"
+elseif q ="CANMOV" and σ= 'E' then return "CANMOVE"
+elseif q ="CANMOVE" and σ= ':' then return "CANMOVE:"
+elseif q ="CANMOVE:" and σ∈('a'‥'z')∪('1'‥'9') then return "CANMOVE:N"
+elseif q="CANMOVE:N" then return "BEGIN"
+		
+// Not a IF
+
+elseif q ="IF" and σ= 'N' then return "N"
+elseif q ="N" and σ= 'O' then return "NO"
+elseif q ="NO" and σ= 'T' then return "NOT"
+elseif q ="NOT" and σ= ':' then return "NOT:"
+elseif q ="NOT:" and σ∈('a'‥'z') then return "IF"
 end
 end 
 end
 
+end
 end
 
 function g(q) begin
@@ -116,3 +224,4 @@ function h(q,σ) begin
 	else return  λ
 	end
 end
+
