@@ -1,0 +1,5 @@
+Nuevas cositas como los condicionales están ahora dentro 
+
+
+
+Esto no es un documento de cambios, es un texto para pedir AYUDA.
