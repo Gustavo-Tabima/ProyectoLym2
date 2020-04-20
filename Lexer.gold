@@ -30,11 +30,23 @@ var names
   
 function createTransducer():ITransducer begin
 	
-	Q:= {'I','R', "RO", "ROB" ,"ROBO", "ROBOT", "ROBOT_", "ROBOT_R" ,"V", "VA", "VAR", "VARS","VARSL","B","BE","BEG","BEGI","BEGIN","A","AS"
-	,"ASI","ASIG","ASIGN","ASIGN:","M","MO","MOV","MOVE","MOVE:","T","TU","TUR","TURN","TURN:","F","FA","FAC","FACE","FACE:","P","PU","PUT","PUT;","PI","PIC","PICK","PICK:","MOVE: t","MOVE: to"
-	,"MOVE: toT","MOVE: toTh","MOVE: toThe","MOVE: i","MOVE: in","MOVE: inD","MOVE: inDi","MOVE: inDir","MOVE: inDir:","i","if","if:","t","th","then","then:","e","el","els","else","else:",
-	"w","wh","whi","whil","while","while:","d","do","do:","r","re","rep","repe","repea","repeat","repeat:","t","ti","tim","time","times","times:","fa","fac","faci","facin","facing","facing:","c","ca","can","canP","canPu","canPut","canPut:","canPi","canPic","canPick","canPick:"
-	,"canM","canMo","canMov","canMov","canMove","canMove:","n","no","not","not:","ERROR"}
+	Q:= {'I','R', "RO", "ROB" ,"ROBO", "ROBOT", "ROBOT_", "ROBOT_R" 
+	,"V", "VA", "VAR", "VARS","VARSL",
+	"B","BE","BEG","BEGI","BEGIN",
+	"A","AS","ASI","ASIG","ASIGN","ASIGN:",
+	"M","MO","MOV","MOVE","MOVE:","MOVE:N"
+	,"T","TU","TUR","TURN","TURN:",
+	"F","FA","FAC","FACE","FACE:",
+	"P","PU","PUT","PUT;",
+	"PI","PIC","PICK","PICK:",
+	"MOVE: t","MOVE: TO"
+	,"MOVE: TOT","MOVE: TOTH","MOVE: TOTHE",
+	"MOVE: I","MOVE: IN","MOVE: IND","MOVE: INDI","MOVE: INDIR","MOVE: INDIR:"
+	,"I","IF","IF:","T","TH","THE","THEN","THEN:","E","EL","ELS","ELSE","ELSE:",
+	"W","WH","WHI","WHIL","WHILE","WHILE:",
+	"D","DO","DO:","R","RE","REP","REPE","REPEA","REPEAT","REPEAT:",
+	"T","TI","TIM","TIME","TIMES","TIMES:","FA","FAC","FACI","FACIN","FACING","FACING:","C","CA","CAN","CANP","CANPU","CANPUT","CANPUT:","CANPI","CANPIC","CANPICK","CANPICK:"
+	,"CANM","CAMM","CANMOV","CANMOV:","CANMOVE","CANMOVE:","N","NO","NOT","NOT:","ERROR"}
 	
 	Σ:=('A'‥'Z') ∪ ('a' ‥ 'z') ∪ (':')∪ ('_') ∪ (' ')∪ (',')
 	Out:={"RR","V(","B{","}E","As","Mo","to","Fa","T","n","s","e","w","Pu","Pi","toThe","inDir"} 
@@ -45,6 +57,8 @@ end
 
 function δ(q,σ) begin
 if σ="" then return q
+end
+if σ="\n" then return q
 if q='I' and σ='R' then return 'R'
 elseif q='R' and σ='O' then return "RO"	 
 elseif q="RO" and σ='B' then return "ROB"	 
@@ -58,18 +72,30 @@ elseif q="ROBOT_R" and σ= 'B' then return "B"
 elseif q="V" and σ= 'A' then return "VA"
 elseif q="VA" and σ= 'R' then return "VAR"
 elseif q="VAR" and σ= 'S' then return "VARS"
-elseif q="VARS" and σ ∈ ('a'‥'z') then return "VARSL "
-elseif q="VARSL" and σ= ',' then return "VARS "
+elseif q="VARS" and σ ∈ ('a'‥'z') then return "VARSL"
+elseif q="VARSL" and σ= ',' then return "VARS"
 elseif q="VARS" and σ= 'B'  then return "B"
 elseif q="B" and σ= 'E' then return "BE"  
 elseif q="BE" and σ= 'G' then return "BEG"  
 elseif q="BEG" and σ= 'I' then return "BEGI"  
 elseif q="BEGI" and σ= 'N' then return "BEGIN"
-    end	
+elseif q="BEGIN" and σ= 'M' then return "M"
+elseif q="M" and σ= 'O' then return "MO"
+elseif q="MO" and σ= 'V' then return "MOV"
+elseif q="MOV" and σ= 'E' then return "MOVE"
+elseif q="MOVE" and σ= ':' then return "MOVE:" 
+elseif q="MOVE:" and σ ∈('a'‥'z')∪('1'‥'9') then return "MOVE:N"
+	//miro las opciones del move
+elseif q="MOVE:N" then  	
+if σ= 'I' then return "MOVE: I"//caso indir
+elseif σ= 'T' then return "MOVE: T"//TOTHE
+else return "BEGIN"  //vuelve al estado begin
+
+end
 end 
 end
 
-
+end
 
 function g(q) begin
 	return λ
@@ -78,9 +104,9 @@ end
 function h(q,σ) begin
 	var s: String
 	s := λ
-
-	if q ∉ {"Err"} and σ ∈ {'(',')',' '} then
-		if σ ∉ {' '} then  s=String.valueOf(σ) end
+	if(q=="ROBOR_R") then return "gatito" end
+	if q ∉ {"E σ ∉ {' '} then  s=String.valueOf(σ) end
+		irr"} and σ ∈ {'(',')',' '} then
 		if q=="I" then return s
     	elseif q=="plus" then return "+"+s 
    		elseif q=="times" then return "*"+s
