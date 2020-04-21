@@ -30,23 +30,38 @@ var names
   
 function createTransducer():ITransducer begin
 	
-	Q:= {'I','R', "RO", "ROB" ,"ROBO", "ROBOT", "ROBOT_", "ROBOT_R" 
-	,"V", "VA", "VAR", "VARS","VARSL",
-	"B","BE","BEG","BEGI","BEGIN",
-	"A","AS","ASI","ASIG","ASIGN","ASIGN:",
-	"M","MO","MOV","MOVE","MOVE:","MOVE:N"
-	,"T","TU","TUR","TURN","TURN:",
-	"F","FA","FAC","FACE","FACE:",
-	"P","PU","PUT","PUT;",
-	"PI","PIC","PICK","PICK:",
-	"MOVE: t","MOVE: TO"
-	,"MOVE: TOT","MOVE: TOTH","MOVE: TOTHE",
-	"MOVE: I","MOVE: IN","MOVE: IND","MOVE: INDI","MOVE: INDIR","MOVE: INDIR:"
-	,"I","IF","IF:","T","TH","THE","THEN","THEN:","E","EL","ELS","ELSE","ELSE:",
+	Q:={'I', 'P'
+	,'R', "RO", "ROB" ,"ROBO", "ROBOT", "ROBOT_", "ROBOT_R" 
+	,"V", "VA", "VAR", "VARS","VARSL"
+	,"B","BE","BEG","BEGI","BEGIN"
+	,"A","AS","ASI","ASIG","ASIGN","ASIGN:","ASIGN:N","ASIGN: T","ASIGN: TO","ASIGN: TO:"
+	,"M","MO","MOV","MOVE","MOVE:","MOVE: N"
+	,"T","TU","TUR","TURN","TURN:","TURN: N"
+	,"F","FA","FAC","FACE","FACE:","FACE: N"
+	,"P","PU","PUT","PUT:","PUT: N","PUT: O","PUT: OF","PUT: OF:","PUT: Of: N"
+	,"PI","PIC","PICK","PICK:","PICK: N","PICK: O","PICK: OF","PICK: OF:"
+	,"MOVE: T","MOVE: TO" ,"MOVE: TOT","MOVE: TOTH","MOVE: TOTHE"
+	,"MOVE: I","MOVE: IN","MOVE: IND","MOVE: INDI","MOVE: INDIR","MOVE: INDIR:"
+	
+	,"N","NO","NOR","NORT","NORTH"
+	,"S","SO","SOU","SOUT","SOUTH"
+	,"W","WE","WES","WEST"
+	,"E","EA","EAS","EAST"
+	,"F*","FR","FRO","FRON","FRONT"
+	,"R","RI","RIG","RIGH","RIGHT"
+	,"L","LE","LEF","LEFT"
+	,"b","BA","BAC","BACK"
+	,"A*","AR","ARO","AROU","AROUN","AROUND"
+	,"C*","CH","CHI","CHIP","CHIPS"
+	,"B*","BA","BAL","BALL","BALLO","BALLOO", "BALLOON","BALLOONS"
+	
+	,"I","IF","IF:","T",
+	"TH","THE","THEN","THEN:","E","EL","ELS","ELSE","ELSE:",
 	"W","WH","WHI","WHIL","WHILE","WHILE:",
 	"D","DO","DO:","R","RE","REP","REPE","REPEA","REPEAT","REPEAT:",
-	"T","TI","TIM","TIME","TIMES","TIMES:","FA","FAC","FACI","FACIN","FACING","FACING:","C","CA","CAN","CANP","CANPU","CANPUT","CANPUT:","CANPI","CANPIC","CANPICK","CANPICK:"
-	,"CANM","CAMM","CANMOV","CANMOV:","CANMOVE","CANMOVE:","N","NO","NOT","NOT:","ERROR"}
+	"T","TI","TIM","TIME","TIMES","TIMES:","TIMES:N","FA","FAC","FACI","FACIN","FACING","FACING:","C","CA","CAN","CANP","CANPU","CANPUT","CANPUT:","CANPUT:N","CANPI","CANPIC","CANPICK","CANPICK:","CANPICK:N",
+	"CANM","CAMO","CANMOV","CANMOV:","CANMOVE","CANMOVE:"
+	}
 	
 	Σ:=('A'‥'Z') ∪ ('a' ‥ 'z') ∪ (':')∪ ('_') ∪ (' ')∪ (',')
 	Out:={"RR","V(","B{","}E","As","Mo","to","Fa","T","n","s","e","w","Pu","Pi","toThe","inDir"} 
@@ -56,19 +71,16 @@ function createTransducer():ITransducer begin
 end
 
 function δ(q,σ) begin
-if σ="" then return q
-end
-if σ="\n" then return q
 if q='I' and σ='R' then return 'R'
 elseif q='R' and σ='O' then return "RO"	 
 elseif q="RO" and σ='B' then return "ROB"	 
 elseif q="ROB" and σ='O' then return "ROBO"	 
 elseif q="ROBO" and σ='T' then return "ROBOT"	 
 elseif q="ROBOT" and σ='_' then return "ROBOT_"	 
-elseif q="ROBOT_" and σ='R' then return "ROBOT_R"	 //aqui ya leyó robot
+elseif q="ROBOT_" and σ='R' then return "ROBOT_R"	 //aqui ya leyÃ³ robot
 elseif q="ROBOT_R" and σ= 'V' then return "V"	 
 elseif q="ROBOT_R" and σ= 'B' then return "B"			 
- //condiciones de lo que puede aparecer después de robot 
+ //condiciones de lo que puede aparecer despuÃ©s de robot 
 elseif q="V" and σ= 'A' then return "VA"
 elseif q="VA" and σ= 'R' then return "VAR"
 elseif q="VAR" and σ= 'S' then return "VARS"
@@ -80,21 +92,283 @@ elseif q="BE" and σ= 'G' then return "BEG"
 elseif q="BEG" and σ= 'I' then return "BEGI"  
 elseif q="BEGI" and σ= 'N' then return "BEGIN"
 elseif q="BEGIN" and σ= 'M' then return "M"
-elseif q="M" and σ= 'O' then return "MO"
-elseif q="MO" and σ= 'V' then return "MOV"
-elseif q="MOV" and σ= 'E' then return "MOVE"
+elseif q="M" and σ= 'o' then return "MO"
+elseif q="MO" and σ= 'v' then return "MOV"
+elseif q="MOV" and σ= 'e' then return "MOVE"
 elseif q="MOVE" and σ= ':' then return "MOVE:" 
-elseif q="MOVE:" and σ ∈('a'‥'z')∪('1'‥'9') then return "MOVE:N"
+elseif q="MOVE:" and σ ∈('a'‥'z')∪('1'‥'9') then return "MOVE: N"
 	//miro las opciones del move
-elseif q="MOVE:N" then  	
-if σ= 'I' then return "MOVE: I"//caso indir
-elseif σ= 'T' then return "MOVE: T"//TOTHE
-else return "BEGIN"  //vuelve al estado begin
-
+	
+elseif q ="MOVE: N" then  	
+if σ= 'i' then return "MOVE: I"//caso indir
+elseif σ= 't' then return "MOVE: T"//TOTHE
+elseif σ= "\n"  then return "BEGIN"
+elseif σ= ""   then return "BEGIN"  //MOVE: n realizado
 end
+
+elseif q="MOVE: I" and σ= 'n' then return "MOVE: IN"
+elseif q="MOVE: IN" and σ= 'D' then return "MOVE: IND"
+elseif q="MOVE: IND" and σ= 'i' then return "MOVE: INDI"
+elseif q="MOVE: INDI" and σ= 'r' then return "MOVE: INDIR"
+	
+elseif q="MOVE: INDIR" and σ= 'n' then return "N"
+elseif q="N" and σ= 'o' then return "NO"
+elseif q="NO" and σ= 'r' then return "NOR"
+elseif q="NOR" and σ= 't' then return "NORT"
+elseif q="NORT" and σ= 'h' then return "NORTH"
+elseif q="NORTH" and σ= ""   then return "BEGIN"	
+elseif q="NORTH" and σ= "\n"  then return "BEGIN"
+
+elseif q="MOVE: INDIR" and σ= 's' then return "S"
+elseif q="S" and σ= 'o' then return "SO"
+elseif q="SO" and σ= 'u' then return "SOU"
+elseif q="SOU" and σ= 't' then return "SOUT"
+elseif q="SOUT" and σ= 'h' then return "SOUTH"
+elseif q="SOUTH" and σ= ""   then return "BEGIN"	
+elseif q="SOUTH" and σ= "\n"  then return "BEGIN"
+	
+elseif q="MOVE: INDIR" and σ= 'e' then return "E"
+elseif q="E" and σ= 'a' then return "EA"
+elseif q="EA" and σ= 's' then return "EAS"
+elseif q="EAS" and σ= 't' then return "EAST"
+elseif q="EAST" and σ= ""   then return "BEGIN"	
+elseif q="EAST" and σ= "\n"  then return "BEGIN"
+
+	
+elseif q="MOVE: INDIR" and σ= 'w' then return "W"
+elseif q="W" and σ= 'e' then return "WE"
+elseif q="WE" and σ= 's' then return "WES"
+elseif q="WES" and σ= 't' then return "WEST"
+elseif q="WEST" and σ= ""   then return "BEGIN"	
+elseif q="WEST" and σ= "\n"  then return "BEGIN"
+	//indir realizado
+	
+
+elseif q="MOVE: T" and σ= 'o' then return "MOVE: TO"
+elseif q="MOVE: TO" and σ= 'T' then return "MOVE: TOT"
+elseif q="MOVE: TOT" and σ= 'h' then return "MOVE: TOTH"
+elseif q="MOVE: TOTH" and σ= 'e' then return "MOVE: TOTHE"
+	
+elseif q="MOVE: THE" and σ= 'f' then return "F*"
+elseif q="F*" and σ= 'r' then return "FR"
+elseif q="FR" and σ= 'o' then return "FRO"
+elseif q="FRO" and σ= 'n' then return "FRON"
+elseif q="FRON" and σ= 't' then return "FRONT"
+elseif q="FRONT" and σ= ""   then return "BEGIN"	
+elseif q="FRONT" and σ= "\n"  then return "BEGIN"
+	
+	
+	
+elseif q="MOVE: TOTHE" and σ= 'b' then return "B"
+elseif q="b" and σ= 'a' then return "BA"
+elseif q="BA" and σ= 'c' then return "BAC"
+elseif q="BAC" and σ= 'k' then return "BACK"
+elseif q="BACK" and σ= ""   then return "BEGIN"	
+elseif q="BACK" and σ= "\n"  then return "BEGIN"
+	
+elseif q="MOVE: TOTHE" and σ= 'l' then return "L"
+elseif q="L" and σ= 'a' then return "LE"
+elseif q="LE" and σ= 'c' then return "LEF"
+elseif q="LEF" and σ= 'k' then return "LEFT"
+elseif q="LEFT" and σ= ""   then return "BEGIN"	
+elseif q="LEFT" and σ= "\n"  then return "BEGIN"
+	
+
+elseif q="MOVE: TOTHE" and σ= 'r' then return "R"
+elseif q="R" and σ= 'i' then return "RI"
+elseif q="RI" and σ= 'g' then return "RIG"
+elseif q="RIG" and σ= 'h' then return "RIGH"
+elseif q="RIGH" and σ= "t"   then return "RIGHT"	
+elseif q="RIGHT" and σ= ""   then return "BEGIN"	
+elseif q="RIGHT" and σ= "\n"  then return "BEGIN"
+	//move tothe completado
+elseif q="BEGIN" and σ= 'a' then return "A"
+elseif q="A" and σ= 's' then return "AS"
+elseif q="AS" and σ= 's' then return "ASS"
+elseif q="ASS" and σ= 'i' then return "ASSI"
+elseif q="ASSI" and σ= 'n' then return "ASSIN"
+elseif q="ASSIN" and σ= 'g' then return "ASSING"
+elseif q="ASSING" and σ= ':' then return "ASSING:"
+elseif q="ASSING:" and σ ∈ ('1'‥'9') then return "ASSING:N"	
+elseif q="ASSING:N" and σ='t'  then return "ASSING: T"	
+elseif q="ASSING: T" and σ='o'  then return "ASSING: TO"	
+elseif q="ASSING: TO" and σ ∈ ('a'‥'z')  then return "ASSING: TO:"	
+elseif q="ASSING: TO:" and σ= ""   then return "BEGIN"
+elseif q="ASSING: TO:" and σ= "\n"   then return "BEGIN"	
+	//ASSING COMPLETADO
+elseif q="BEGIN" and σ= 't' then return "T"
+elseif q="T" and σ= 'u' then return "TU"
+elseif q="TU" and σ= 'r' then return "TUR"
+elseif q="TUR" and σ= 'n' then return "TURN"
+elseif q="TURN" and σ= ':' then return "TURN:"
+elseif q="TURN:" and σ ='r' then return "R"
+elseif q="TURN:" and σ ='l' then return "L"
+elseif q="TURN:" and σ ='a' then return "A*"
+elseif q="A*" and σ ='r' then return "AR"
+elseif q="AR" and σ ='o' then return "ARO"
+elseif q="ARO" and σ ='u' then return "AROU"	
+elseif q="AROU" and σ= 'n' then return "AROUN"
+elseif q="AROUN" and σ= 'd' then return "BEGIN"
+	//TURN TERMINADO
+elseif q="BEGIN" and σ= 'f' then return "F"
+elseif q ="F" and σ= 'a' then return "FA"
+elseif q ="FA" and σ= 'c' then return "FAC"
+elseif q ="FAC" and σ= 'e' then return "FACE"
+elseif q ="FACE" and σ= ':' then return "FACE:"	
+elseif q="FACE:" and σ ='n' then return "N"
+elseif q="FACE:" and σ ='s' then return "S"
+elseif q="FACE:" and σ ='e' then return "E"
+elseif q="FACE:" and σ ='w' then return "W"
+//face terminado
+
+
+elseif q="BEGIN" and σ= 'p' then return "P"
+elseif q="P" and σ= 'u' then return "PU"
+elseif q="PU" and σ= 't' then return "PUT"
+elseif q="PUT" and σ= ':' then return "PUT:"
+elseif q="PUT:" and σ∈('a'‥'z')∪('1'‥'9')	 then return "PUT: N"
+elseif q="PUT: N" and σ='o' then return "PUT: O"
+elseif q="PUT: O" and σ='f' then return "PUT: OF"
+elseif q="PUT: OF" and σ=':' then return "PUT: OF:"	
+elseif q="PUT: OF:" and σ='c' then return "C*"
+elseif q="PUT: OF:" and σ='b' then return "B*"
+
+elseif q="C*" and σ='h' then return "CH"	
+elseif q="CH" and σ='i' then return "CHI"
+elseif q="CHI" and σ='p' then return "CHIP"
+elseif q="CHIP" and σ='s' then return "BEGIN"
+
+elseif q="B*" and σ='a' then return "BA"
+elseif q="BA" and σ='l' then return "BAL"	
+elseif q="BAL" and σ='l' then return "BALL"
+elseif q="BALL" and σ='O' then return "BALLO"	
+elseif q="BALLO" and σ='O' then return "BALLOO"
+elseif q="BALLO" and σ='n' then return "BALLOON"
+elseif q="BALLON" and σ='s' then return "BEGIN"
+	
+//put listo
+elseif q="P" and σ= 'i' then return "PI"
+elseif q="PI" and σ= 'c' then return "PIC"
+elseif q="PIC" and σ= 'k' then return "PICK"
+elseif q="PICK" and σ= ':' then return "PICK:"
+elseif q="PICK" and σ= ':' then return "PICK:"	
+elseif q="PICK" and σ= ':' then return "PICK:"
+elseif q="PICK:" and σ∈('a'‥'z')∪('1'‥'9')	 then return "PICK: N"
+elseif q="PICK: N" and σ='o' then return "PICK: O"
+elseif q="PICK: O" and σ='f' then return "PICK: OF"
+elseif q="PICK: OF" and σ=':' then return "PICK: OF:"
+elseif q="PICK: OF:" and σ='c' then return "C*"
+elseif q="PICK: OF:" and σ='b' then return "B*"
+
+
+//ESTRUCTURAS DE CONTROL 
+//-------------------------------------------------------------------------------------------------
+//------------------------Condicionales------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+
+//Llegado de Begin a If
+if q="BEGIN" and σ= 'I' then return "I"
+elseif q="BEGIN" and σ= 'F' then return "IF"
+	
+//DE IF A FACING
+elseif q ="IF" and σ= 'F' then return "F"
+elseif q ="F" and σ= 'A' then return "FA"
+elseif q ="FA" and σ= 'C' then return "FAC"
+elseif q ="FAC" and σ= 'I' then return "FACI"
+elseif q ="FACI" and σ= 'N' then return "FACIN"
+elseif q ="FACIN" and σ= 'G' then return "FACING"
+elseif q ="FACING" and σ= "S" then return "S"
+elseif q ="FACING" and σ= "N" then return "N"
+elseif q ="FACING" and σ= "W" then return "W"
+elseif q ="FACING" and σ= "E" then return "E"
+
+//DE IF A CANPICK
+elseif q ="IF" and σ= 'C' then return "C"
+elseif q ="C" and σ= 'A' then return "CA"
+elseif q ="CA" and σ= 'N' then return "CAN"
+elseif q ="CAN" and σ= 'P' then return "CANP"
+elseif q ="CANP" and σ= 'I' then return "CANPI"
+elseif q ="CANPI" and σ= 'C' then return "CANPIC"
+elseif q ="CANPIC" and σ= 'K' then return "CANPICK"
+elseif q ="CANPICK" and σ= ':' then return "CANPICK:"
+elseif q ="CANPICK:" and σ∈('a'‥'z')∪('1'‥'9') then return "CANPICK:N"
+elseif q="CANPICK:N" then return "IF"
+	
+// DE IF A CANPUT
+elseif q ="IF" and σ= 'C' then return "C"
+elseif q ="C" and σ= 'A' then return "CA"
+elseif q ="CA" and σ= 'N' then return "CAN"
+elseif q ="CAN" and σ= 'P' then return "CANP"
+elseif q ="CANP" and σ= 'U' then return "CANPU"
+elseif q ="CANPU" and σ= 'T' then return "CANPUT"
+elseif q ="CANPUT" and σ= ':' then return "CANPUT:"
+elseif q ="CANPUT:" and σ∈('a'‥'z')∪('1'‥'9') then return "CANPUT:N"
+elseif q="CANPUT:N" then return "IF"
+//Then A BEGIN
+elseif q ="IF" and σ= 'T' then return "T"
+elseif q ="T" and σ= 'H' then return "TH"
+elseif q ="TH" and σ= 'E' then return "THE"
+elseif q ="THE" and σ= 'N' then return "BEGIN"
+//BEGIN a else
+elseif q ="BEGIN" and σ= 'E' then return "E"
+elseif q ="E" and σ= 'L' then return "EL"
+elseif q ="EL" and σ= 'S' then return "ELS"
+elseif q ="ELS" and σ= 'E' then return "BEGIN"	
+
+
+//De While a IF
+elseif q ="BEGIN" and σ= 'W' then return "W"
+elseif q ="W" and σ= 'H' then return "TH"
+elseif q ="WH" and σ= 'E' then return "THE"
+elseif q ="WHI" and σ= 'L' then return "WHIL"
+elseif q ="WHIL" and σ= 'E' then return "WHILE"
+elseif q ="WHILE" and σ= ':' then return "WHILE:"
+elseif q ="WHILE:"  then return "IF"
+
+//Do a Begin
+elseif q ="IF" and σ= 'D' then return "D"
+elseif q ="D" and σ= 'O' then return "BEGIN"
+	
+//Begin a Times
+
+elseif q ="BEGIN" and σ= 'T' then return "T"
+elseif q ="T" and σ= 'I' then return "TI"
+elseif q ="TI" and σ= 'E' then return "TIM"
+elseif q ="TIM" and σ= 'L' then return "TIME"
+elseif q ="TIME" and σ= 'E' then return "TIMES"
+elseif q ="TIMES" and σ= ':' then return "TIMES:"
+elseif q ="TIMES:" and σ∈('a'‥'z')∪('1'‥'9') then return "TIMES:N"
+elseif q="TIMES:N" then return "BEGIN"
+
+//IF a CanMove
+elseif q ="IF" and σ= 'C' then return "C"
+elseif q ="C" and σ= 'A' then return "CA"
+elseif q ="CA" and σ= 'N' then return "CAN"
+elseif q ="CAN" and σ= 'M' then return "CANM"
+elseif q ="CANM" and σ= 'O' then return "CANMO"
+elseif q ="CANMO" and σ= 'V' then return "CANMOV"
+elseif q ="CANMOV" and σ= 'E' then return "CANMOVE"
+elseif q ="CANMOVE" and σ= ':' then return "CANMOVE:"
+elseif q ="CANMOVE:" and σ∈('a'‥'z')∪('1'‥'9') then return "CANMOVE:N"
+elseif q="CANMOVE:N" then return "BEGIN"
+		
+// Not a IF
+
+elseif q ="IF" and σ= 'N' then return "N"
+elseif q ="N" and σ= 'O' then return "NO"
+elseif q ="NO" and σ= 'T' then return "NOT"
+elseif q ="NOT" and σ= ':' then return "NOT:"
+elseif q ="NOT:" and σ∈('a'‥'z') then return "IF"
+
+
+if σ="" then return q
+end
+if σ="\n" then return q
+	
+end
+
 end 
-end
-
+end 
 end
 
 function g(q) begin
